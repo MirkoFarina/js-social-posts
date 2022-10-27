@@ -243,5 +243,3 @@ function likeButton(){
         })
     }
 }
-
-console.log(arrayLiked);
