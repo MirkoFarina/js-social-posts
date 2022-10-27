@@ -56,14 +56,8 @@ const posts = [
     }
 ];
 const container = document.getElementById('container');
-const arrayLiked = [];
 const buttonLike = document.getElementsByClassName('like-button');
-/* Descrizione**
-****BONUS**
 
-
-3
-Al click su un pulsante “Mi Piace” di un post, se abbiamo già cliccato dobbiamo decrementare il contatore e cambiare il colore del bottone. */
 init();
 
 
