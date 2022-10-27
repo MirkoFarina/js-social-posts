@@ -60,29 +60,14 @@ const arrayLiked = [];
 const buttonLike = document.getElementsByClassName('like-button');
 /* Descrizione**
 ****BONUS**
-1
-Se clicchiamo sul tasto “Mi Piace” cambiamo il colore al testo del bottone e incrementiamo il counter dei likes relativo.
-Salviamo in un secondo array gli id dei post ai quali abbiamo messo il like.
-2
-Gestire l’assenza dell’immagine profilo con un elemento di fallback che contiene le iniziali dell’utente (es. Luca Formicola > LF).
+
+
 3
 Al click su un pulsante “Mi Piace” di un post, se abbiamo già cliccato dobbiamo decrementare il contatore e cambiare il colore del bottone. */
 init();
 
 
-for(let i = 0; i < buttonLike.length; i++ ){
-    buttonLike[i].addEventListener('click', function(e){
-        e.preventDefault();
-        let id = this.getAttribute('data-postid');
-        let numberOfLikes;
-        
-        this.classList.add("like-button--liked");
-        numberOfLikes = posts[i].likes =  parseInt(posts[i].likes) + 1;
-        arrayLiked.push(id);
-        
-        document.getElementById(`like-counter-${id}`).innerHTML = numberOfLikes;
-    }, {once: true})
-}
+
 
 
 
@@ -96,6 +81,7 @@ for(let i = 0; i < buttonLike.length; i++ ){
  */
 function init(){
     generatePosts();
+    likeButton();
 };
 
 
@@ -110,22 +96,8 @@ function generatePosts(){
 }
 
 
- function checkImg(image, name, id){
-    let noSpace = "";
-    if(image == null) {
-        
-    name.split("").map(char => {
-            if(char == char.toUpperCase()){
-                noSpace += char.replace(/\s/g, '');
-            }
-        })
-        return noSpace;
-    };
-    
-    
-};
 /**
- * 
+ * grazie a questa funzione creo la card a seconda di se c'è o no l'img di profilo
  * @param {oggetto} post passare l'oggetto da cui prendere i dati
  * @returns card compilata pronta per essere stampata
  */
@@ -133,15 +105,16 @@ function createDocument(post){
     const {id, content, media, author, likes, created } = post;
     const {name, image} = author;
     let card = '';
-    let newImg = checkImg(image, name, id);
+    let newImg = checkImg(image, name);
     let newDate = transformDate(created);
+
     if(image == null){
         card =     `
         <div class="post">
             <div class="post__header">
                 <div class="post-meta">                    
                     <div class="post-meta__icon">
-                        ${newImg}                   
+                       <div class="profile-pic-default"> ${newImg}  </div>                  
                     </div>
                     <div class="post-meta__data">
                         <div class="post-meta__author">${name}</div>
@@ -177,7 +150,7 @@ function createDocument(post){
                 <div class="post__header">
                     <div class="post-meta">                    
                         <div class="post-meta__icon">
-                            <img class="profile-pic" id="${id}" src="${image}" alt="${name}">                    
+                            <img class="profile-pic"  src="${image}" alt="${name}">                    
                         </div>
                         <div class="post-meta__data">
                             <div class="post-meta__author">${name}</div>
@@ -211,6 +184,24 @@ function createDocument(post){
     return card;
 }
 
+/**
+ * grazie a questa funzione mi estrapolo le iniziali del nome solo quando non c'è l'img nell'oggetto
+ * @param {string} image 
+ * @param {string} name 
+ * @returns Iniziali nome
+ */
+ function checkImg(image, name){
+    let noSpace = "";
+    if(image == null) {
+        
+    name.split("").map(char => {
+            if(char == char.toUpperCase()){
+                noSpace += char.replace(/\s/g, '');
+            }
+        })
+        return noSpace;
+    };   
+};
 
 /**
  * 
@@ -224,3 +215,33 @@ function transformDate(date){
     
    return giorno + '-' + mese + '-' + anno;
 };
+
+
+/**
+ * quando premo sul button like mi aggiunge il like nei likes e mi colora il bottono di verde
+ */
+let isClicked = false;
+function likeButton(){
+    for(let i = 0; i < buttonLike.length; i++ ){
+        buttonLike[i].addEventListener('click', function(e){
+            e.preventDefault();
+            let id = this.getAttribute('data-postid');
+            let numberTheLikes = parseInt(posts[i].likes);
+            let numberOfLikes;
+            if(!isClicked){
+                this.classList.add("like-button--liked");
+                numberOfLikes = numberTheLikes + 1;
+                isClicked = true;
+            }else {
+                this.classList.remove("like-button--liked");
+                numberOfLikes = numberTheLikes;
+                isClicked = false;
+            }
+           
+
+            document.getElementById(`like-counter-${id}`).innerHTML = numberOfLikes;
+        })
+    }
+}
+
+console.log(arrayLiked);
