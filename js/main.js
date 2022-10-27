@@ -56,12 +56,9 @@ const posts = [
     }
 ];
 const container = document.getElementById('container');
-
-
+const arrayLiked = [];
+const buttonLike = document.getElementsByClassName('like-button');
 /* Descrizione**
-Ricreiamo un feed social aggiungendo al layout di base fornito, il nostro script JS in cui:
-Utilizzando la base dati fornita e prendendo come riferimento il layout di esempio presente nell’html, stampiamo i post del nostro feed.
-Formattare le date in formato italiano (gg/mm/aaaa)
 ****BONUS**
 1
 Se clicchiamo sul tasto “Mi Piace” cambiamo il colore al testo del bottone e incrementiamo il counter dei likes relativo.
@@ -72,16 +69,52 @@ Gestire l’assenza dell’immagine profilo con un elemento di fallback che cont
 Al click su un pulsante “Mi Piace” di un post, se abbiamo già cliccato dobbiamo decrementare il contatore e cambiare il colore del bottone. */
 init();
 
+
+for(let i = 0; i < buttonLike.length; i++ ){
+    buttonLike[i].addEventListener('click', function(){
+        let id = this.getAttribute('data-postid');
+        let numberOfLikes;
+        
+        this.classList.add("like-button--liked");
+        numberOfLikes = posts[i].likes =  parseInt(posts[i].likes) + 1;
+        arrayLiked.push(id);
+        
+        document.getElementById(`like-counter-${id}`).innerHTML = numberOfLikes;
+    })
+}
+
+
+
+
+
+// ********************************************** FUNZIONI **********************************************
+
+
+/**
+ * funzione iniziale
+ */
 function init(){
     generatePosts();
 };
 
 
+/**
+ * genera i post che mi servono scomponendo l'array e ottenendo tutti i dati che utilizzerò, e stampa le card
+ */
 function generatePosts(){
     posts.forEach(post => {
-        container.innerHTML += createDocument(post);   
+        container.innerHTML += createDocument(post);  
     });
+
 }
+
+
+
+/**
+ * 
+ * @param {oggetto} post passare l'oggetto da cui prendere i dati
+ * @returns card compilata pronta per essere stampata
+ */
 function createDocument(post){
     const {id, content, media, author, likes, created } = post;
     const {name, image} = author;
@@ -109,13 +142,13 @@ function createDocument(post){
             <div class="post__footer">
                 <div class="likes js-likes">
                     <div class="likes__cta">
-                        <a class="like-button  js-like-button" href="#" data-postid="${id}">
+                        <a class="like-button  js-like-button" href="#" data-postid="${id}" >
                             <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
                             <span class="like-button__label">Mi Piace</span>
                         </a>
                     </div>
                     <div class="likes__counter">
-                        Piace a <b id="like-counter-1" class="js-likes-counter">${likes}</b> persone
+                        Piace a <b id="like-counter-${id}" class="js-likes-counter">${likes}</b> persone
                     </div>
                 </div> 
             </div>            
@@ -124,6 +157,12 @@ function createDocument(post){
     return card;
 }
 
+
+/**
+ * 
+ * @param {string} date data da rigirare in formato anno/mese/giorno
+ * @returns data girata in formato giorno/mese/anno
+ */
 function transformDate(date){
     let anno = date.slice(0, 4);
     let mese = date.slice(5,7);
