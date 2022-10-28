@@ -228,11 +228,13 @@ function likeButton(){
                 isClicked = true;
             }else {
                 this.classList.remove("like-button--liked");
-                numberOfLikes = numberTheLikes;
+                numberOfLikes = numberTheLikes - 1;
                 isClicked = false;
             }
            
-
+            const likedPost = posts.filter(post => post.id == id )
+            likedPost[0].likes = numberOfLikes;
+            console.log(posts);
             document.getElementById(`like-counter-${id}`).innerHTML = numberOfLikes;
         })
     }
